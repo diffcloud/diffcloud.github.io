@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-VQTBKP87MK"
+    ></script>
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-VQTBKP87MK");
+    </script>
+
+    <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="HOMER"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      DiffCloud: Real-to-Sim from Point Clouds with Differentiable Simulation and Rendering of Deformable Objects
+    </title>
+
+
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css" />
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css" />
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css" />
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+    />
+    <link rel="stylesheet" href="./static/css/index.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript">
+      google.load("jquery", "1.3.2");
+    </script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+          inlineMath: [['$', '$']]
+          },
+          "HTML-CSS": {
+          availableFonts: ["TeX", "STIX-Web", "Asana-Math", "Latin-Modern"], // Specify the desired font here
+          preferredFont: "STIX-Web", // Set the preferred font
+          webFont: "STIX-Web" // Set the web font to use
+          },
+      });
+    </script>
+    <script
+      src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+      type="text/javascript"
+    ></script>
+  </head>
+  <body>
+
+<!-- Navbar -->
+<nav class="navbar is-light is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#">
+      <strong>DiffCloud</strong>
+    </a>
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarMenu" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="#method">Method Overview</a>
+      <a class="navbar-item" href="#real2sim">Real-to-Sim Experiments</a>
+      <a class="navbar-item" href="#sim2sim">Sim-to-Sim Experiments</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Spacer to prevent navbar overlap -->
+<div style="margin-top: 4.5rem;"></div>
+
+
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h1 class="title is-1 publication-title">
+                <span class="gradient-text">DiffCloud</span>: Real-to-Sim from Point Clouds with Differentiable Simulation and Rendering of Deformable Objects
+              </h1>
+
+              <div class="column has-text-centered">
+                <div class="publication-links">
+                  <!-- PDF Link. -->
+                  <span class="link-block">
+                    <a
+                      href="https://arxiv.org/pdf/2204.03139"
+                      class="external-link button is-normal is-rounded is-dark"
+                    >
+                      <span class="icon">
+                        <i class="fas fa-file-pdf"></i>
+                      </span>
+                      <span>Paper</span>
+                    </a>
+                  </span>
+
+                  <!-- Code Link. -->
+                  <span class="link-block">
+                    <a
+                      href="https://github.com/priyasundaresan/diffcloud_real2sim.git"
+                      class="external-link button is-normal is-rounded is-dark"
+                    >
+                      <span class="icon">
+                        <i class="fa-brands fa-github"></i>
+                      </span>
+                      <span>Code</span>
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Abstract. -->
+    <section class="section">
+            <div class="columns is-vcentered  is-centered shaded-panel" style="width: 50%;">
+            <h2 class="subtitle has-text-centered">
+            TLDR: We introduce <strong><span>DiffCloud</span></strong> which combines <b style="color: #1e88e5;">differentiable simulation</b> with <b style="color: #1e88e5;">differentiable rendering</b> for <b>real-to-sim parameter estimation</b> of deformable objects from point clouds. 
+
+            </h2>
+            </div>
+            <br/>
+            <div class="columns is-vcentered is-centered">
+              <img src="media/splash.png" style="width: 50%;" />
+            </div>
+            <br/>
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>
+Research in manipulation of deformable objects is typically conducted on a limited range of scenarios, because handling each scenario on hardware takes significant effort. Realistic simulators with support for various types of deformations and interactions have the potential to speed up experimentation with novel tasks and algorithms. However, for highly deformable objects it is challenging to align the output of a simulator with the behavior of real objects. Manual tuning is not intuitive, hence automated methods are needed. We view this alignment problem as a joint perception-inference challenge and demonstrate how to use recent neural network architectures to successfully perform simulation parameter inference from real point clouds. We analyze the performance of various architectures, comparing their data and training requirements. Furthermore, we propose to leverage differentiable point cloud sampling and differentiable simulation to significantly reduce the time to achieve the alignment. We employ an efficient way to propagate gradients from point clouds to simulated meshes and further through to the physical simulation parameters, such as mass and stiffness. Experiments with highly deformable objects show that our method can achieve comparable or better alignment with real object behavior, while reducing the time needed to achieve this by more than an order of magnitude.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!--/ Abstract. -->
+      </div>
+    </section>
+
+
+    <!-- Title Card + Caption -->
+    <section class="hero teaser">
+      <div class="container is-fullhd">
+        <div class="hero-body">
+          <div class="container">
+            <br/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" id="method"> 
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column">
+            <h2 class="title is-3" id="method">Method Overview</h2>
+            <div class="columns is-vcentered  is-centered">
+              <video
+                id="teaser"
+                class="intro-video"
+                autoplay
+                loop
+                muted
+                style="transform: scale(2); transform-origin: center top;"
+              >
+                <source src="media/method_overview.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="content has-text-left" style="margin: 0 auto; width: 85%;">
+              <ul>
+                <li><b>Description:</b>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section> 
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+
+<hr/>
+<section class="section" id="experiments">
+  <div class="container is-max-desktop">
+    <!-- Section Header -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Experiments</h2>
+      </div>
+    </div>
+
+    <!-- Overview -->
+    <div class="columns is-centered shaded-panel" style="width: 100%;">
+      <div class="column">
+        <p>
+          We evaluate <strong>DiffCloud</strong> on its ability to recover the parameters of both real and simulated deformable objects. Our method directly infers deformable simulation parameters—<i>mass</i> and <i>stiffness</i>—from point cloud sequences. 
+        </p>
+        <br/>
+        <p>
+We benchmark against inverse models that treat the simulator as a non-differentiable black box—used solely as a data engine to generate synthetic point cloud sequences paired with ground-truth parameters. These models require offline dataset generation and supervised training to learn to infer object parameters.
+        </p>
+      </div>
+    </div>
+
+    <!-- Baselines Table -->
+    <br/>
+    <div class="columns is-centered shaded-panel" style="width: 90%;">
+      <div class="column">
+        <h2 class="title is-4 has-text-centered">Baselines Overview</h2>
+        <table class="table is-fullwidth is-striped is-bordered has-text-centered">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Simulator Access</th>
+              <th>Label-Free</th>
+              <th>Point Cloud Input</th>
+              <th>Optimization Strategy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>MLP</strong></td>
+              <td>Black-box</td>
+              <td>&#10007;</td>
+              <td>Single frame</td>
+              <td>Direct regression</td>
+            </tr>
+            <tr>
+              <td><strong>PointNet++</strong></td>
+              <td>Black-box</td>
+              <td>&#10007;</td>
+              <td>Single frame</td>
+              <td>Direct regression</td>
+            </tr>
+            <tr>
+              <td><strong>MeteorNet</strong></td>
+              <td>Black-box</td>
+              <td>&#10007;</td>
+              <td>Full sequence</td>
+              <td>Direct regression</td>
+            </tr>
+            <tr style="background-color: #4f9ec240;">
+              <td><strong>DiffCloud (Ours)</strong></td>
+              <td style="background-color: #4f9ec240;">Differentiable</td>
+              <td style="background-color: #4f9ec240;">&#10003;</td>
+              <td style="background-color: #4f9ec240;">Full sequence</td>
+              <td style="background-color: #4f9ec240;">Gradient-based</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="has-text-justified">
+          <br/>
+          <strong>MLP, PointNet++, MeteorNet:</strong> Networks trained via offline supervised learning on synthetically generated data which learn to directly regress the parameters of deformable items from point cloud observations.
+          <br/>
+          <strong>DiffCloud:</strong> Infers object parameters on-the-fly using differentiable simulation and differentiable rendering, without any offline data generation or training. It directly optimizes parameters to align the simulated object's visual appearance with observed point clouds.
+        </p>
+      </div>
+    </div>
+ 
+<hr/ id="real2sim">
+
+    <!-- Real-World Experiments -->
+    <br/>
+     <div class="columns is-centered" style="width: 100%;">
+      <div class="column">
+        <h2 class="title is-4 has-text-centered">Real-to-Sim Parameter Estimation</h2>
+        <p>
+          We evaluate DiffCloud on two real-world cloth manipulation scenarios using a Kinova Gen3 robot, treating them as sources of point cloud observations from which DiffCloud infers the underlying physical parameters of the cloth: <strong>Lift</strong> and <strong>Fold</strong>. The fold task is especially challenging due to self-occlusion and partial observability. Each scenario is performed on 5 different cloth types—ranging from highly deformable to stiff. For each cloth, we collect 3 real trajectories and run all methods to recover the cloth parameters given real point cloud observations.
+        </p>
+      </div>
+    </div>
+
+
+<div class="columns is-centered shaded-panel" style="width: 90%; margin-top: 2rem;">
+  <div class="column">
+    <h3 class="title is-5 has-text-centered">Real-World Data Collection</h3>
+    <p>
+      We collect real point cloud observations of cloth manipulation scenarios using a Kinova Gen3 arm and dual RealSense cameras.
+    </p>
+  </div>
+</div>
+
+    <div class="columns is-centered is-vcentered" style="margin-top: 1rem;">
+      <div class="column is-half has-text-centered">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/lift_real.mp4" type="video/mp4" />
+        </video>
+        <p><em>Lift</em></p>
+      </div>
+    
+      <div class="column is-half has-text-centered">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/fold_real.mp4" type="video/mp4" />
+        </video>
+        <p><em>Fold</em></p>
+      </div>
+    </div>
+
+     <div class="columns is-centered shaded-panel" style="width: 90%;">
+      <div class="column">
+        <h3 class="title is-5 has-text-centered">Differentiable Simulation Scenarios</h3>
+        <p>
+         We use differentiable simulation environments built with <a href="https://github.com/YilingQiao/diffsim" target="_blank">DiffSim</a> to model cloth deformation during Lift and Fold tasks. Each scenario uses a 49-vertex triangular mesh and keyframed end-effector motion over 25 steps to enable gradient-based parameter optimization.
+        </p>
+      </div>
+     </div>
+    <div class="columns is-vcentered is-gapless" style="margin-top: 1rem; justify-content: center;">
+      <div class="column is-narrow has-text-centered" style="margin-right: 4.5rem;">
+        <video autoplay loop muted style="width: 80%;">
+          <source src="media/lift.mp4" type="video/mp4" />
+        </video>
+      </div>
+    
+      <div class="column is-narrow has-text-centered" style="margin-left: 6.5rem;">
+        <video autoplay loop muted style="width: 80%;">
+          <source src="media/fold.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+
+
+     <div class="columns is-centered shaded-panel" style="width: 90%;">
+      <div class="column">
+        <h3 class="title is-5 has-text-centered">Qualitative Results</h3>
+        <p>
+          <strong>DiffCloud</strong> recovers mass/stiffness parameters that visually explain the observed point cloud observations and cloth behavior.
+        </p>
+      </div>
+     </div>
+
+    <div class="columns is-centered is-vcentered" style="margin-top: 1rem;">
+      <div class="column is-half has-text-centered">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/lift_results.mp4" type="video/mp4" />
+        </video>
+      </div>
+    
+      <div class="column is-half has-text-centered">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/fold_results.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+
+     <div class="columns is-centered shaded-panel" style="width: 90%;">
+      <div class="column">
+        <h3 class="title is-5 has-text-centered">Quantitative Results</h3>
+        <p>
+          <strong>DiffCloud</strong> achieves lower or comparable Chamfer loss than all baselines while recovering intuitive physical parameters (e.g., high mass for heavy cloths). It runs in ~10 minutes per trajectory, compared to hours of dataset generation and training for baselines.
+        </p>
+      </div>
+     </div>
+
+    <!-- Real Video and Figure -->
+    <div class="columns is-centered" style="margin-top: 0.5rem;">
+      <div class="column is-half has-text-centered">
+        <img src="media/lift.png" style="width: 80%;" />
+      </div>
+
+      <div class="column is-half has-text-centered">
+        <img src="media/fold.png" style="width: 81%;" />
+      </div>
+    </div>
+<hr/ id="sim2sim">
+
+    <!-- Simulated Experiments -->
+    <br/>
+    <div class="columns is-centered" style="width: 100%;">
+      <div class="column">
+        <h2 class="title is-4 has-text-centered">Sim-to-Sim Parameter Estimation </h2>
+        <p>
+          We additionally evaluate DiffCloud in simulation using two contact-rich deformable tasks:
+        </p>
+        <br/>
+        <ul style="text-align: left;">
+          <li><b>Band Stretch:</b> Pulling an elastic band tight against a pole, which tests tension response.</li>
+          <li><b>Vest Hang:</b> Hanging a cloth vest on a pole, which tests collapse and contact dynamics.</li>
+        </ul>
+        <br/>
+        <p>
+          Across 10 target runs per scenario, DiffCloud consistently recovers simulation parameters that align with ground truth, achieving sub-threshold Chamfer loss in all cases. Baselines succeed on only 50–80% of runs despite using noise-free input.
+        </p>
+      </div>
+    </div>
+
+     <div class="columns is-centered shaded-panel" style="width: 90%;">
+      <div class="column">
+        <h3 class="title is-5 has-text-centered">Differentiable Simulation Scenarios</h3>
+        <p>
+        We use differentiable simulation to model complex cloth-object interactions in the Band Stretch and Vest Hang scenarios. These tasks feature contact-rich dynamics and are used to evaluate how well parameter optimization generalizes to varied deformation behaviors beyond simple lifting and folding.
+        </p>
+      </div>
+     </div>
+
+    <div class="columns is-centered is-vcentered is-gapless" style="margin-top: 1rem;">
+      <div class="column is-one-third has-text-centered" style="padding: 0;">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/band_stretch.mp4" type="video/mp4" />
+        </video>
+        <p><em>Band Stretch</em></p>
+      </div>
+    
+      <div class="column is-one-third has-text-centered" style="padding: 0;">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/vest_hang.mp4" type="video/mp4" />
+        </video>
+        <p><em>Vest Hang</em></p>
+      </div>
+    </div>
+
+     <div class="columns is-centered shaded-panel" style="width: 90%;">
+      <div class="column">
+        <h3 class="title is-5 has-text-centered">Qualitative Results</h3>
+        <p>
+        In the Band Stretch and Vest Hang scenarios, <strong>DiffCloud</strong> starts from a standard initial guess (black) and optimizes simulation parameters to produce cloth deformations (blue) that closely match the target point cloud observations (green).
+        </p>
+      </div>
+     </div>
+    <div class="columns is-centered is-vcentered" style="margin-top: 1rem;">
+      <div class="column is-half has-text-centered">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/band_stretch_results.mp4" type="video/mp4" />
+        </video>
+      </div>
+    
+      <div class="column is-half has-text-centered">
+        <video autoplay loop muted style="width: 100%;">
+          <source src="media/vest_hang_results.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+
+
+<div class="columns is-centered shaded-panel" style="width: 90%; margin-top: 2rem;">
+  <div class="column">
+    <h3 class="title is-5 has-text-centered">Quantitative Results</h3>
+    <p>
+      We evaluate <strong>DiffCloud</strong> and baseline inverse models on 10 held-out simulation runs for each scenario. 
+      A prediction is considered successful if the Chamfer distance between the simulated and target point clouds falls below a predefined threshold. 
+      <strong>DiffCloud</strong> achieves alignment in <strong>100%</strong> of runs for both <em>Band Stretch</em> and <em>Vest Hang</em>, while baseline regressors achieve success in only <strong>50–80%</strong> of runs across scenarios.
+    </p>
+  </div>
+</div>
+
+
+    <div class="columns is-centered is-vcentered" style="margin-top: 1rem;">
+      <div class="column is-half has-text-centered">
+        <img src="media/band_stretch_results.png" style="width: 60%;" />
+      </div>
+      <div class="column is-half has-text-centered">
+        <img src="media/vest_hang_results.png" style="width: 60%;" />
+      </div>
+    
+    </div>
+
+
+<hr/>
+    <!-- Compute Time Comparison -->
+    <br/>
+    <div class="columns is-centered" style="width: 100%;">
+      <div class="column">
+        <h2 class="title is-4 has-text-centered">Compute Efficiency</h2>
+        <p>
+          One of the key advantages of <strong>DiffCloud</strong> is its speed. While supervised baselines require hours of dataset generation and training, DiffCloud directly optimizes simulation parameters in minutes using differentiable simulation.
+        </p>
+        <br/>
+        <ul style="text-align: left;">
+          <li><b>DiffCloud:</b> ~10 minutes per real trajectory (Lift/Fold), ~5 minutes per simulated trajectory (Vest/Band).</li>
+          <li><b>Baselines:</b> >2 hours for dataset generation + 40–120 minutes for training per task.</li>
+        </ul>
+        <br/>
+        <p>
+          The chart below compares end-to-end runtime per method (data collection + training + inference for baselines vs. optimization for DiffCloud).
+        </p>
+      </div>
+    </div>
+    
+    <!-- Compute Time Chart -->
+    <div class="columns is-centered" style="margin-top: 1rem;">
+      <div class="column is-full has-text-centered">
+        <img src="media/times_params.png" style="width: 80%;" />
+        <p><em>Left: Total compute time for parameter inference on real data.<br/>Right: Final parameters inferred by DiffCloud across cloth types.</em></p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+  </body>
+</html>
