@@ -246,10 +246,6 @@ li {
 .publication-authors {
 }
 
-.publication-authors a {
-   color: hsl(36, 100%, 50%) !important;
-}
-
 .conference-authors a {
    color: #B83A4B !important;
 }
